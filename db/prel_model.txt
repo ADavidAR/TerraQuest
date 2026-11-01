@@ -1,0 +1,122 @@
+Moneda
+    id_moneda (PK, UUID)
+    factor_dolar (DOUBLE)
+
+Pais
+    id_pais (PK, UUID)
+    nombre (VARCHAR)
+    id_moneda (FK, UUID)
+
+Rol
+    id_rol (PK, UUID)
+    nombre_rol (VARCHAR): Identifica si es Administrador, Gerente de Tienda o Cliente.
+    editable BOOLEAN NOT NULL
+
+Modulo
+	id_modulo BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	descripcion TEXT
+
+
+Permiso
+	id_permiso BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	id_modulo BIGINT NOT NULL,
+	endpoint_url TEXT NOT NULL,
+
+Modulo_X_Rol 
+	id_rol BIGINT NOT NULL,
+	id_modulo BIGINT NOT NULL,
+	acceso BOOLEAN NOT NULL,
+	modificacion BOOLEAN NOT NULL,
+	eliminacion BOOLEAN NOT NULL,
+	creacion BOOLEAN NOT NULL,
+
+Usuario
+    id_usuario (PK, UUID)
+    nombre_completo (VARCHAR)
+    id_pais: una vez creado no se puede cambiar
+    correo (VARCHAR, UNIQUE): Validado con regex y único en la base de datos.
+    password_hash (VARCHAR): Contraseña encriptada utilizando Argon2.
+    activo (BOOLEANO)
+    id_rol (FK -> Rol.id_rol)
+
+
+Tipo_Suscripcion
+    id_tipo_suscripcion (PK, UUID)
+    nombre (VARCHAR)
+    precio_dolar (DOUBLE)
+
+Suscripcion
+    id_suscripcion (PK, UUID)
+    id_tipo_suscripcion (FK, UUID)
+    id_usuario (FK, UUID)
+    estado (BOOLEAN, NOT NULL)
+    fecha_inicio (DATETIME, NOT NULL)
+    fecha_expiracion (DATETIME, NOT NULL)
+    fecha_cancelación (DATETIME, NULL)
+
+Rareza
+    id_rareza (PK, UUID)
+    etiqueta (VARCHAR)
+
+Insignia
+    id_insignia (PK, UUID)
+    titulo (VARCHAR)
+    id_rareza (FK, UUID)
+    url_img (VARCHAR)
+    url_thumbnail (VARCHAR)
+ 
+Dificultad
+    id_dificultad (PK, UUID)
+    etiqueta (VARCHAR)
+
+Mision
+    id_mision (PK, UUID)
+    id_insignia (FK, UUID)
+    id_dificultad (FK, UUID)
+    nombre (VARCHAR)
+    descripcion (VARCHAR)
+    ubicación (VARCHAR, NULL)
+
+Campana
+    id_campana (PK, UUID)
+    id_mision (FK, UUID)
+    id_organizador (FK usuario)
+    cupos (INT)
+    fecha_inicio (DATETIME)
+    fecha_fin (DATETIME)
+    precio_inscripcion_dolar (DOUBLE)
+    distancia (DOUBLE)
+
+Usuarios_X_Campana
+    id_campana (PK, FK, UUID)
+    id_usuario (PK, FK, UUID)
+    id_factura (FK, UUID)
+    asistencia (BOOLEAN)
+    estado (VARCHAR, CHECK): estado <= 2 & estado > 0
+                0: INCOMPLETO
+                1: En PROGRESO
+                1: COMPLETADO
+
+Desafio
+    id_desafio (PK, UUID)
+    id_mision (FK, UUID)
+    
+
+Usuarios_X_Desafio
+    id_desafio (PK, FK, UUID)
+    id_usuario (PK, FK, UUID)
+    fecha_completado (DATE, NULL)
+
+
+Facturas
+    id_factura (PK, UUID)
+    id_usuario (PK, UUID)
+    fecha_compra (DATETIME)
+
+Detalle_Factura
+    id_factura (PK, FK, UUID)
+    id_detalle (PK, UUID): Raid o Suscripcion
+    precio_unitario: convertido a moneda de pais
+    cantidad
+    subtotal
+    
