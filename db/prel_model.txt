@@ -74,8 +74,26 @@ Mision
     id_insignia (FK, UUID)
     id_dificultad (FK, UUID)
     nombre (VARCHAR)
+    ruta_id (FK, NULL)
+    miniatura (VARCHAR, NULL):  PD: crear banco de iconos por defecto
     descripcion (VARCHAR)
-    ubicación (VARCHAR, NULL)
+    tiempo_estimado (INT): segundos
+
+Ruta
+    titulo (VARCHAR)
+    descripcion (VARCHAR)
+    miniatura (VARCHAR): url imagen
+    id_ruta (PK, UUID)
+    inicio (FK, Punto_Interes)
+    fin (FK, Punto_Interes)
+
+
+Punto_Interes
+    id_punto (PK, UUID)
+    id_ruta (FK, UUID)
+    nombre (VARCHAR)
+    distancia_acumulada_metros (DOUBLE): coord x
+    geometría (Point Z, UNIQUE): PostGIS
 
 Campana
     id_campana (PK, UUID)
