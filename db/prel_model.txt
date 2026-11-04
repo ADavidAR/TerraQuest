@@ -40,6 +40,15 @@ Usuario
     id_rol (FK -> Rol.id_rol)
 
 
+Estadistica
+    id_estadistica (PK, UUID)
+    nombre (VARCHAR)
+
+Estadistica_X_usuario
+    id_estadistica (FK, PK, UUID)
+    id_usuario (FK, PK, UUID)
+    valor (DOUBLE)
+
 Tipo_Suscripcion
     id_tipo_suscripcion (PK, UUID)
     nombre (VARCHAR)
@@ -69,15 +78,6 @@ Dificultad
     id_dificultad (PK, UUID)
     etiqueta (VARCHAR)
 
-Mision
-    id_mision (PK, UUID)
-    id_insignia (FK, UUID)
-    id_dificultad (FK, UUID)
-    nombre (VARCHAR)
-    ruta_id (FK, NULL)
-    miniatura (VARCHAR, NULL):  PD: crear banco de iconos por defecto
-    descripcion (VARCHAR)
-    tiempo_estimado (INT): segundos
 
 Ruta
     titulo (VARCHAR)
@@ -95,6 +95,21 @@ Punto_Interes
     distancia_acumulada_metros (DOUBLE): coord x
     geometría (Point Z, UNIQUE): PostGIS
 
+Mision
+    id_mision (PK, UUID)
+    id_insignia (FK, UUID)
+    id_dificultad (FK, UUID)
+    nombre (VARCHAR)
+    id_ruta (FK, NULL)
+    id_estadistica (FK, NULL)
+    miniatura (VARCHAR, NULL):  PD: crear banco de iconos por defecto
+    descripcion (VARCHAR)
+    tiempo_estimado (INT): segundos
+
+Requisitos_Mision
+    id_mision_principal (FK, Mision, UUID)
+    id_requisito (FK, Mision, UUID)
+
 Campana
     id_campana (PK, UUID)
     id_mision (FK, UUID)
@@ -110,6 +125,7 @@ Usuarios_X_Campana
     id_usuario (PK, FK, UUID)
     id_factura (FK, UUID)
     asistencia (BOOLEAN)
+    fecha_completado (DATE, NULL)
     estado (VARCHAR, CHECK): estado <= 2 & estado > 0
                 0: INCOMPLETO
                 1: En PROGRESO
