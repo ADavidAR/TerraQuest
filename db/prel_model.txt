@@ -39,20 +39,25 @@ Usuario
     activo (BOOLEANO)
     id_rol (FK -> Rol.id_rol)
 
-
-Estadistica
-    id_estadistica (PK, UUID)
-    nombre (VARCHAR)
-
-Estadistica_X_usuario
-    id_estadistica (FK, PK, UUID)
-    id_usuario (FK, PK, UUID)
-    valor (DOUBLE)
+Perfil_Usuario
+    id_perfil (PK, UUID)
+    id_usuario (FK, UNIQUE)
+    alias (VARCHAR)
+    foto_perfil (VARCHAR): URL
+    id_especialidad (FK, UUID)
+    nivel_actual (INT)
+    experiencia_actual (INT)
+    experiencia_total (INT)
+    fecha (TIMESTAMP)
+    estadistiicas (JSONB)
 
 Tipo_Suscripcion
     id_tipo_suscripcion (PK, UUID)
     nombre (VARCHAR)
-    precio_dolar (DOUBLE)
+    precio_dolar (INT)
+    Periodicidad (VARCHAR)
+    cantidad_eventos (INT)
+    descripcion (VARCHAR)
 
 Suscripcion
     id_suscripcion (PK, UUID)
@@ -66,13 +71,6 @@ Suscripcion
 Rareza
     id_rareza (PK, UUID)
     etiqueta (VARCHAR)
-
-Insignia
-    id_insignia (PK, UUID)
-    titulo (VARCHAR)
-    id_rareza (FK, UUID)
-    url_img (VARCHAR)
-    url_thumbnail (VARCHAR)
  
 Dificultad
     id_dificultad (PK, UUID)
@@ -80,31 +78,70 @@ Dificultad
 
 
 Ruta
+    id_ruta (PK, UUID)
     titulo (VARCHAR)
     descripcion (VARCHAR)
     miniatura (VARCHAR): url imagen
-    id_ruta (PK, UUID)
-    inicio (FK, Punto_Interes)
-    fin (FK, Punto_Interes)
+    tiempo_estimado (INT): segundos
+    recompensa_experiencia (INT)
 
 
 Punto_Interes
     id_punto (PK, UUID)
-    id_ruta (FK, UUID)
     nombre (VARCHAR)
-    distancia_acumulada_metros (DOUBLE): coord x
     geometría (Point Z, UNIQUE): PostGIS
+
+Checkpoint
+    id_checkpoint (PK, UUID)
+    id_ruta (FK, UUID)
+    id_punto (FK, UUID)
+        UNIQUE (id_ruta, id_punto)
+    orden (INT)
+    distancia_acumulada_metros (DOUBLE)
+
+Registro_Checkpoint
+    id_registro_checkpoint (PK, UUID)
+    id_checkpoint (FK, UUID)
+    id_usuario (FK, UUID)
+    fecha_visita (TIMESTAMP)
+    estado_validacion (INT)
+        0: PENDIENTE
+        1: VISITADO
+
+Expedicion
+    id_expedicion (PK, UUID)
+    id_usuario (FK, UUID)
+    id_ruta (FK, UUID)
+    fecha_inicio (TIMESTAMP)
+    fecha_finalizacion (TIMESTAMP)
+    distancia_recorrida_metro (DOUBLE)
+    desnivel_acumulado_metro (DOUBLE)
+    geometria_recorrida (LINESTRINGZ): PostGIS
+    estado (VARCHAR)
 
 Mision
     id_mision (PK, UUID)
-    id_insignia (FK, UUID)
     id_dificultad (FK, UUID)
     nombre (VARCHAR)
     id_ruta (FK, NULL)
-    id_estadistica (FK, NULL)
+    estadistica_clave (VARCHAR, NULL)
     miniatura (VARCHAR, NULL):  PD: crear banco de iconos por defecto
     descripcion (VARCHAR)
-    tiempo_estimado (INT): segundos
+    campana (BOOLEAN): indica si una mision es una campaña
+    recompensa_experiencia (INT)
+
+
+Progreso_Mision
+    id_mision (PK, FK, UUID)
+    id_usuario (PK, FK, UUID)
+    progreso_actual (DOUBLE)
+    fecha_completado (DATE, NULL)
+    estado (INT, CHECK): estado <= 2 & estado > 0
+        0 = INSCRITO
+        1 = EN_PROGRESO
+        2 = COMPLETADO
+        3 = CANCELADO
+        4 = NO_ASISTIO
 
 Requisitos_Mision
     id_mision_principal (FK, Mision, UUID)
@@ -112,12 +149,13 @@ Requisitos_Mision
 
 Campana
     id_campana (PK, UUID)
-    id_mision (FK, UUID)
+    id_mision (FK, UUID, UNIQUE)
     id_organizador (FK usuario)
     cupos (INT)
+    fecha_inscripcion_limite (TIMESTAMP)
     fecha_inicio (DATETIME)
     fecha_fin (DATETIME)
-    precio_inscripcion_dolar (DOUBLE)
+    precio_inscripcion_dolar (INT)
     distancia (DOUBLE)
 
 Usuarios_X_Campana
@@ -126,31 +164,91 @@ Usuarios_X_Campana
     id_factura (FK, UUID)
     asistencia (BOOLEAN)
     fecha_completado (DATE, NULL)
-    estado (VARCHAR, CHECK): estado <= 2 & estado > 0
-                0: INCOMPLETO
-                1: En PROGRESO
-                1: COMPLETADO
 
-Desafio
-    id_desafio (PK, UUID)
+Insignia
+    id_insignia (PK, UUID)
     id_mision (FK, UUID)
+    titulo (VARCHAR)
+    id_rareza (FK, UUID)
+    url_img (VARCHAR)
+    url_thumbnail (VARCHAR)
+
+Usuario_X_Insignia
+    id_insignia (FK, PK, UUID)
+    id_usuario (FK, PK, UUID)
+    equipada (BOOLEAN)
+    posicion_equipada (SMALLINT)
+
+Liquidacion
+    id_liquidacion (PK, UUID)
+    total_recaudado (INT)
+    monto_organizador (INT)
     
-
-Usuarios_X_Desafio
-    id_desafio (PK, FK, UUID)
-    id_usuario (PK, FK, UUID)
-    fecha_completado (DATE, NULL)
-
+Metodo_Cobro
+    id_metodo_cobro (PK, UUID)
+    id_usuario (FK, Usuarios_X_Desafio)
+    numero_tarjeta (VARCHAR)
 
 Facturas
     id_factura (PK, UUID)
     id_usuario (PK, UUID)
     fecha_compra (DATETIME)
+    total (INT)
+    impuesto (INT)
 
 Detalle_Factura
     id_factura (PK, FK, UUID)
     id_detalle (PK, UUID): Raid o Suscripcion
+    tipo_detalle (VARCHAR)
     precio_unitario: convertido a moneda de pais
-    cantidad
-    subtotal
-    
+    cantidad (INT)
+    subtotal (INT)
+
+Pago
+    id_pago (PK, UUID)
+    id_factura (FK, UUID)
+    monto (INT)
+    estado (INT)
+        0: PENDIENTE
+        1: COMPLETADO
+    fecha (TIMESTAMP)
+
+Dorsal
+    id_dorsal (PK, UUID)
+    id_campana (FK, UUID)
+    id_usuario (FK, UUID)
+    codigo_dorsal (VARCHAR)
+    codigo_verificacion (VARCHAR, UNIQUE)
+    categoria (VARCHAR)
+    fecha_emision (TIMESTAMPTZ)
+    estado (VARCHAR)
+
+Dispositivo_Sync
+    id_dispositivo (PK, UUID)
+    id_usuario (FK, UUID)
+    ultima_sincronizacion (TIMESTAMPTZ)
+    cursor_sincronizacion (VARCHAR)
+    fecha_registro (TIMESTAMPTZ)
+
+
+Paquete_Offline
+    id_paquete (PK, UUID)
+    version (VARCHAR)
+    tipo (VARCHAR)
+    url_descarga (TEXT)
+    tamano_bytes (BIGINT)
+    checksum (VARCHAR)
+    fecha_generacion (TIMESTAMPTZ)
+
+-----------------  DB SQLite Local  -------------------
+
+
+Paquete_Offline
+    id_paquete (PK, UUID)
+    version (VARCHAR)
+    tipo (VARCHAR)
+    url_descarga (TEXT)
+    tamano_bytes (BIGINT)
+    checksum (VARCHAR)
+    cobertura (POLYGON, PostGIS)
+    fecha_generacion (TIMESTAMPTZ)
