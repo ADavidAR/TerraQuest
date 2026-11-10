@@ -30,6 +30,11 @@ Modulo_X_Rol
 	eliminacion BOOLEAN NOT NULL,
 	creacion BOOLEAN NOT NULL,
 
+Especialidad
+    id_especialidad (PK, UUID)
+    nombre (VARCHAR)
+    descripcion (VARCHAR)
+
 Usuario
     id_usuario (PK, UUID)
     nombre_completo (VARCHAR)
@@ -76,15 +81,23 @@ Dificultad
     id_dificultad (PK, UUID)
     etiqueta (VARCHAR)
 
-
 Ruta
     id_ruta (PK, UUID)
+    id_dificultad (PK, UUID)
     titulo (VARCHAR)
     descripcion (VARCHAR)
+    geometria (LINESTRINGZ, PostGIS)
     miniatura (VARCHAR): url imagen
     tiempo_estimado (INT): segundos
     recompensa_experiencia (INT)
-
+    desnivel_positivo_metros (DOUBLE)
+    desnivel_negativo_metros (DOUBLE)
+    altitud_maxima_metros (DOUBLE)
+    altitud_minima_metros (DOUBLE)
+    pendiente_maxima (DOUBLE)
+    fecha_actualizacion (TIMESTAMP)
+    distancia_metros (DOUBLE)
+    activa (BOOLEAN)
 
 Punto_Interes
     id_punto (PK, UUID)
@@ -156,7 +169,6 @@ Campana
     fecha_inicio (DATETIME)
     fecha_fin (DATETIME)
     precio_inscripcion_dolar (INT)
-    distancia (DOUBLE)
 
 Usuarios_X_Campana
     id_campana (PK, FK, UUID)
@@ -181,8 +193,13 @@ Usuario_X_Insignia
 
 Liquidacion
     id_liquidacion (PK, UUID)
-    total_recaudado (INT)
+    id_campana (FK, UUID)
+    monto_bruto (INT)
+    monto_comision (INT)
     monto_organizador (INT)
+    estado (VARCHAR)
+    fecha_liquidacion (TIMESTAMP)
+    id_metodo_cobro (PK, UUID)
     
 Metodo_Cobro
     id_metodo_cobro (PK, UUID)
@@ -229,7 +246,6 @@ Dispositivo_Sync
     ultima_sincronizacion (TIMESTAMPTZ)
     cursor_sincronizacion (VARCHAR)
     fecha_registro (TIMESTAMPTZ)
-
 
 Paquete_Offline
     id_paquete (PK, UUID)
