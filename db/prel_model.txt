@@ -175,7 +175,6 @@ Usuarios_X_Campana
     id_usuario (PK, FK, UUID)
     id_factura (FK, UUID)
     asistencia (BOOLEAN)
-    fecha_completado (DATE, NULL)
 
 Insignia
     id_insignia (PK, UUID)
