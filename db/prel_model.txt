@@ -54,7 +54,7 @@ Perfil_Usuario
     experiencia_actual (INT)
     experiencia_total (INT)
     fecha (TIMESTAMP)
-    estadistiicas (JSONB)
+    estadisticas (JSONB)
 
 Tipo_Suscripcion
     id_tipo_suscripcion (PK, UUID)
@@ -108,6 +108,7 @@ Checkpoint
     id_checkpoint (PK, UUID)
     id_ruta (FK, UUID)
     id_punto (FK, UUID)
+    caracteristicas (JSONB)
         UNIQUE (id_ruta, id_punto)
     orden (INT)
     distancia_acumulada_metros (DOUBLE)
@@ -131,16 +132,18 @@ Expedicion
     desnivel_acumulado_metro (DOUBLE)
     geometria_recorrida (LINESTRINGZ): PostGIS
     estado (VARCHAR)
+        0 = EN_PROGRESO
+        1 = COMPLETADO
 
 Mision
     id_mision (PK, UUID)
     id_dificultad (FK, UUID)
     nombre (VARCHAR)
     id_ruta (FK, NULL)
-    estadistica_clave (VARCHAR, NULL)
+    estadistica (JSONB): [{<clave_objetivo>: <valor_objetivo>}]
     miniatura (VARCHAR, NULL):  PD: crear banco de iconos por defecto
     descripcion (VARCHAR)
-    campana (BOOLEAN): indica si una mision es una campaña
+    es_campana (BOOLEAN): indica si una mision es una campaña
     recompensa_experiencia (INT)
 
 
@@ -150,9 +153,9 @@ Progreso_Mision
     progreso_actual (DOUBLE)
     fecha_completado (DATE, NULL)
     estado (INT, CHECK): estado <= 2 & estado > 0
-        0 = INSCRITO
-        1 = EN_PROGRESO
-        2 = COMPLETADO
+        0 = EN_PROGRESO
+        1 = COMPLETADO
+        2 = INSCRITO
         3 = CANCELADO
         4 = NO_ASISTIO
 
