@@ -1,9 +1,13 @@
 Moneda
     id_moneda (PK, UUID)
+    simbolo (CHAR(1))
     factor_dolar (DOUBLE)
 
 Pais
     id_pais (PK, UUID)
+    geometría (MultiPolygon, PostGIS)
+    codigo_iso2 (CHAR(2))
+    codigo_iso_numerico (CHAR(3))
     nombre (VARCHAR)
     id_moneda (FK, UUID)
 
