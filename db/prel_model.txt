@@ -101,6 +101,10 @@ Ruta
     activa (BOOLEAN)
     publica (BOOLEAN)
 
+Ruta_X_Pais
+    id_ruta (PK, FK, UUID)
+    id_pais (PK, FK, UUID)
+
 Punto_Interes
     id_punto (PK, UUID)
     nombre (VARCHAR)
