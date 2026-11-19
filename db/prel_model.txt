@@ -88,6 +88,7 @@ Dificultad
 Ruta
     id_ruta (PK, UUID)
     id_dificultad (PK, UUID)
+    id_creador (Fk, UUID)
     id_propietario (FK, Usuario)
     titulo (VARCHAR)
     descripcion (VARCHAR)
@@ -101,6 +102,7 @@ Ruta
     altitud_minima_metros (DOUBLE)
     pendiente_maxima (DOUBLE)
     fecha_actualizacion (TIMESTAMP)
+    fecha_creacion (TIMESTAMP)
     distancia_metros (DOUBLE)
     activa (BOOLEAN)
     publica (BOOLEAN)
@@ -178,7 +180,6 @@ Campana
     id_mision (FK, UUID, UNIQUE)
     id_organizador (FK usuario)
     cupos (INT)
-    fecha_inscripcion_limite (TIMESTAMP)
     fecha_inicio (DATETIME)
     fecha_fin (DATETIME)
     precio_inscripcion_dolar (INT)
