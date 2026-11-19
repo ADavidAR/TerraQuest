@@ -84,6 +84,7 @@ Dificultad
 Ruta
     id_ruta (PK, UUID)
     id_dificultad (PK, UUID)
+    id_propietario (FK, Usuario)
     titulo (VARCHAR)
     descripcion (VARCHAR)
     geometria (LINESTRINGZ, PostGIS)
@@ -98,6 +99,7 @@ Ruta
     fecha_actualizacion (TIMESTAMP)
     distancia_metros (DOUBLE)
     activa (BOOLEAN)
+    publica (BOOLEAN)
 
 Punto_Interes
     id_punto (PK, UUID)
